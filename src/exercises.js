@@ -149,14 +149,19 @@ export const censorSentence = null;
 /// NUMBERS
 
 
-export const twoNumberAdd = null;
+export const twoNumberAdd = (num1, num2)=> num1 + num2;
+
+(num1, num2)=>{
+  return num1 + num2;
+};
 // here we need to take two number inputs and add them
 // example input: (12049, 157)
 // example output: 12206
 
 
 
-export const allNumberAdd = null;
+export const allNumberAdd = (...numbers)=>
+  numbers.reduce((total, number)=> total + number, 0)
 // this is the same as the last one, but we will receive a different number of parameters (all numbers) each time
 // we still need to add them all together to pass the test
 // example input: (1, 10, 100, 1000)
@@ -167,7 +172,41 @@ export const allNumberAdd = null;
 
 
 
-export const greatest = null;
+export const greatest = numbers =>
+  numbers.reduce((max, number)=> number > max ? number : max, numbers[0]);
+
+
+numbers=> Math.max(...numbers);
+
+
+numbers=> numbers.sort((a, b)=> a > b ? -1 : 1)[0];
+
+
+(numbers)=> {
+  const sortedNumbers = numbers.sort((a, b)=> a > b ? -1 : 1);
+  return sortedNumbers[0];
+};
+
+
+(numbers)=> {
+  let max = numbers[0];
+  numbers.forEach(number=> {
+    if( number > max ) max = number;
+  });
+  return max;
+};
+
+
+
+(numbers)=> {
+  let max = numbers[0];
+  for(let i=0; i<(numbers.length); i++){
+    if(numbers[i] > max){
+      max = numbers[i];
+    }
+  }
+  return max;
+};
 // here we'll receive as input an array full of numbers
 // out job will be to return the greatest (closest to Infinity) from them
 // example input: ([ 1, 10, -100, 50 ])
@@ -175,7 +214,32 @@ export const greatest = null;
 
 
 
-export const biggest = null;
+export const biggest = numbers =>
+  numbers.reduce((big, number)=> (
+    Math.abs(number) > Math.abs(big) ? number : big
+  ), numbers[0]);
+
+
+(numbers)=> {
+  let big = numbers[0];
+
+  numbers.forEach(number=> {
+    if( Math.abs(number) > Math.abs(big) ) big = number;
+  });
+
+  return big;
+};
+
+
+(numbers)=> {
+  let big = numbers[0];
+  for(let i=0; i<(numbers.length); i++){
+    if( Math.abs(numbers[i]) > Math.abs(big) ){
+      big = numbers[i];
+    }
+  }
+  return big;
+};
 // here we'll receive as input an array full of numbers
 // out job will be to return the biggest (furthest from zero) from them
 // example input: ([ 1, 10, -100, 50 ])
@@ -197,7 +261,13 @@ export const convertToInt = null;
 // example output: [1, 10, -10, 6]
 
 
-export const formatAsMoney = null;
+export const formatAsMoney = number => '$'+number.toFixed(2);
+
+
+(number)=> {
+  const twoDigits = number.toFixed(2);
+  return '$'+twoDigits;
+};
 // here we'll receive a float (a decimal number) or integer, our job is to return a formatted price string like $10.24
 // example input: (3.5013)
 // exmaple output '$3.50'
@@ -228,7 +298,29 @@ export const isStringIntOrFloat = null;
 // example output: 'float'
 
 
-export const isXYinRadius = null;
+export const isXYinRadius = (x, y, r)=> !( x*x + y*y > r*r );
+
+
+(x, y, r)=> (((x**2 + y**2) ** 0.5) <= r);
+
+
+(x, y, r)=> {
+  const radius = (x**2 + y**2) ** 0.5;
+  return (radius <= r);
+};
+
+
+(x, y, r)=> {
+  const radius = (x**2 + y**2) ** 0.5;
+  return ( radius > r ) ? false : true;
+};
+
+
+(x, y, r)=> {
+  const radius = (x**2 + y**2) ** 0.5;
+  if( radius > r ) return false;
+  else return true;
+};
 // here we will receive three number inputs: (x, y, r)
 // our job is to determine if the coordinate (x, y) is within radius r of the origin (0, 0)
 // and return a Boolean of whether it is
@@ -264,7 +356,28 @@ export const alphebetize = null;
 
 
 
-export const filterStrings = null;
+export const filterStrings = array=>
+  array.filter(item => ( typeof item !== 'string' ) );
+
+
+(array)=> {
+  let result = [];
+  array.forEach(item =>
+    ( typeof item !== 'string' ) ? result.push( item ) : null
+  );
+  return result;
+};
+
+
+(array)=>{
+  let result = [];
+  for(let i=0; i<(array.length); i++){
+    if( typeof array[i] !== 'string' ){
+      result.push( array[i] );
+    }
+  }
+  return result;
+};
 // here we receive an array that has strings and numbers (and maybe other stypes of stuff)
 // our job is to return an array with all the elements from the input that aren't strings (in order)
 // example input: (['blah', 1, {}, 'rawr'])
@@ -322,7 +435,19 @@ export const dereferenceCircularArray = null;
 // example output: 3
 
 
-export const filterByAge = null;
+export const filterByAge = (people, minimumAge)=>
+  people.filter( person=> (person.age >= minimumAge) );
+
+
+(people, minimumAge)=> {
+  let altekakkers = [];
+  for(let i=0; i<(people.length); i++){
+    if( people[i].age >= minimumAge ){
+      altekakkers.push( people[i] );
+    }
+  }
+  return altekakkers;
+};
 // here we'll receive an array of objects representing people
 // each will have an age number field... like { age: 22 }
 // we'll also receive a minimum age as a second param
