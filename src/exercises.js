@@ -108,7 +108,59 @@ export const darkenHexColor = null;
 // example output: '#bb6699'
 
 
-export const convertHexToRGBA = null;
+export const convertHexToRGBA = hexColor=>
+  'rgba(' +
+  (hexColor.length === 5 ? (
+    hexColor.slice(1).split('')
+            .map(hexDigit=> hexDigit + hexDigit)
+  ) : (
+    [0, 1, 2, 3].map(i => (
+      hexColor[2*i + 1] + hexColor[2*i + 2]
+    ))
+  )).map(hexCode=> parseInt(hexCode, 16)).join() + ')';
+
+
+
+
+
+hexColor=>
+  'rgba(' +
+  (hexColor.length === 5 ? (
+    hexColor.slice(1).split('')
+            .map(hexDigit=> hexDigit + hexDigit)
+  ) : (
+    hexColor.slice(1).split('')
+            .reduce((hexCodes, hexDigit, i)=> {
+              if( !(i % 2) ) hexCodes.push( hexDigit );
+              else hexCodes[ hexCodes.length-1 ] += hexDigit;
+
+              return hexCodes;
+            }, [])
+  )).map(hexCode=> parseInt(hexCode, 16)).join() + ')';
+
+
+
+(hexColor)=>{
+  let hexCodes = [];
+
+  if( hexColor.length === 5 ){
+    for(let i=1; i<(hexColor.length); i++){
+      hexCodes.push( hexColor[i] + hexColor[i] );
+    }
+  } else {
+    for(let i=1; i<(hexColor.length); i++){
+      if( (i % 2) === 1 ){
+        hexCodes.push( hexColor[i] );
+      } else {
+        hexCodes[ hexCodes.length-1 ] += hexColor[i];
+      }
+    }
+  }
+
+  const decimals = hexCodes.map(hexCode=> parseInt(hexCode, 16));
+
+  return 'rgba(' + decimals.join() + ')';
+};
 // here we will receive a #ABCD four digit CSS hex color, or a #AABBCCDD eight digit CSS hex color
 // our job is to return the equivalent rgba(123, 123, 123, 123) CSS color
 // example input: ('#8bc8')
@@ -118,7 +170,28 @@ export const convertHexToRGBA = null;
 // example output: 'rgba(198,78,130,189)'
 
 
-export const convertRGBAtoHex = null;
+export const convertRGBAtoHex = (rgbaColor)=>
+  '#'+ rgbaColor.replace('rgba(', '')
+                .replace(')', '')
+                .replace(/\s/g, '')
+                .split(',')
+                .map(sn => 1*sn)
+                .map(n=> n.toString(16))
+                .map(h=> h.padStart(2, '0'))
+                .join('');
+
+(rgbaColor)=>{
+  const numbers = rgbaColor.replace('rgba(', '')
+                           .replace(')', '')
+                           .replace(/\s/g, '')
+                           .split(',')
+                           .map(sn => 1*sn);
+
+  const hexCodes = numbers.map(n=> n.toString(16))
+                          .map(h=> h.padStart(2, '0'));
+
+  return '#'+hexCodes.join('');
+};
 // here we will receive an 'rgba(123, 123, 123, 123)' CSS color
 // our job is to return the equivalent 8 digit hex color
 // example input: ('rgba(90,30,14,249)')
@@ -331,7 +404,9 @@ export const isXYinRadius = (x, y, r)=> !( x*x + y*y > r*r );
 /// ARRAYS
 
 
-export const twoArraysTogether = null;
+export const twoArraysTogether = (arr1, arr2)=> [...arr1, ...arr2];
+
+(arr1, arr2)=> arr1.concat(arr2);
 // here we will receive two arrays, we'll return one array that has all the elements from both arrays (in order)
 // example input: ([1, 2, 3], [4, 5, 'monkey'])
 // example output: [1, 2, 3, 4, 5, 'monkey']
@@ -418,20 +493,34 @@ export const filterAllTruthy = null;
 // example output: [0, '', null]
 
 
-export const leftTruncate = null;
+export const leftTruncate = (array, number)=> array.slice(number);
+
 // here we want to truncate (cut) some number (second param) of elements from the left (beginning) of the array (first param)
 // example input: ([1, 2, 3, 4, 5, 6, 7, 8, 9, 'monkey'], 4)
 // example output: [5, 6, 7, 8, 9, 'monkey']
 
 
-export const dereferenceCircularArray = null;
+export const dereferenceCircularArray = (array, index)=>
+  array[  index  % array.length  ];
+
+
+
+(array, index)=>{
+  let i = index;
+
+  while( array.length <= i ){
+    i -= array.length;
+  }
+
+  return array[i];
+};
 // here we will get an array and an index to read out of the array
 // however, the index may be past the end of the array
 // when it is, we want to treat the array as a circle (array[array.length] === array[0]) and loop around it as long as we need
 // example input: ([1, 2, 3, 'monkey'], 15)
 // example output: 'monkey'
 
-// example input: ({1, 2, 3, 'monkey'], 2)
+// example input: ([1, 2, 3, 'monkey'], 2)
 // example output: 3
 
 
@@ -461,7 +550,20 @@ export const filterByAgeDestructure = null;
 // this exercise is exactly like the previous one, but here we are required to use a fat arrow with a destructured param
 
 
-export const filteredAges = null;
+export const filteredAges = (people, minimumAge)=>
+  people.filter(person=> person.age >= minimumAge)
+        .map(person=> person.age);
+
+
+(people, minimumAge)=>{
+  let oldPeopleAges = [];
+
+  for( let i = 0; i < people.length; i++)
+    if( people[i].age >= minimumAge )
+      oldPeopleAges.push( people[i].age );
+
+  return oldPeopleAges;
+};
 // this exercise is the same as the previous two, but here we are required to return the ages (not the people)
 // example input: ([{ age: 14 }, { age: 20 }, { age: 35 }], 18)
 // example output: [20, 35]
@@ -504,7 +606,24 @@ export const flattenArray = null;
 
 
 
-export const uniquifyArray = null;
+export const uniquifyArray = array=>
+  array.filter((item, i)=> array.indexOf(item) === i );
+
+
+
+(array)=> {
+  let result = [];
+  array.forEach(item=> {
+    if( !result.includes(item) )
+      result.push(item);
+  });
+  return result;
+};
+
+
+
+(array)=> Array.from( new Set(array) );
+
 // we will receive an array with arbitrary strings
 // our job is to take out duplicates
 // example input: (['nik is great', 'nik is great', 420, 2000, 2000])
